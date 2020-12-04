@@ -2,8 +2,101 @@
 
 import os
 import re
+from functools import reduce
+
 
 path = "C:\\Users\Lenovo\\Documents\\GitHub\\advent_of_code"
+
+
+# DAY 3
+
+print("Day 3")
+
+# Part 1
+# In the input file, . represents free space and # represents a tree. Assuming that the slope is three spaces to the right, then one down, how many trees are encountered?
+
+print("part 1:")
+
+f3 = open(os.path.join(path, "day3_input.txt"), "r")
+
+trees = 0
+line_counter = 1
+index = 3
+
+for line_raw in f3:
+    line = line_raw.strip()
+    line_length = len(line) - 1
+    if line_counter == 1:
+        line_counter += 1
+    else:
+        if index <= line_length:
+            if line[index] == "#":
+                trees += 1
+                index += 3
+            else:
+                index += 3
+        elif index > line_length:
+            index = index - len(line)
+            if line[index] == "#":
+                trees += 1
+                index += 3
+            else:
+                index += 3
+
+print(trees)       
+
+
+# Part 2
+# Now we need to put in several different slopes (in tuple list below) and multiply the results.
+
+print("part 2:")
+
+def find_trees(right, down):
+    f3 = open(os.path.join(path, "day3_input.txt"), "r")
+    rel_line = 1 + down
+    line_counter = 1
+    index = right
+    trees = 0
+    for line_raw in f3:
+        line = line_raw.strip()
+        line_length = len(line) - 1
+        if line_counter < rel_line:
+            line_counter += 1        
+        elif line_counter == rel_line:
+            if index <= line_length:
+                if line[index] == "#":
+                    trees += 1
+                    index += right
+                else:
+                    index += right
+            elif index > line_length:
+                index = index - len(line)
+                if line[index] == "#":
+                    trees += 1
+                    index += right
+                else:
+                    index += right
+            line_counter += 1
+            rel_line += down
+    return trees
+
+slopes = [
+    (1, 1),
+    (3, 1),
+    (5, 1),
+    (7, 1),
+    (1, 2)
+    ]
+
+res_list = []
+
+for slope in slopes:
+    res_list.append(find_trees(slope[0], slope[1]))
+
+print(reduce(lambda x, y: x*y, res_list))
+
+
+quit()
 
 
 # DAY 2
