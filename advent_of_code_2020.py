@@ -8,6 +8,80 @@ from functools import reduce
 path = "C:\\Users\Lenovo\\Documents\\GitHub\\advent_of_code"
 
 
+# DAY 4
+
+print("Day 4")
+
+# Part 1
+# Passports that contain all 8 fields should be counted as valid. If they only miss cid, they should also be included.
+
+print("part 1:")
+
+f4 = open(os.path.join(path, "day4_input.txt"), "r")
+data = f4.read()
+individuals = re.split("\n\n", data)
+valid = 0
+
+for individual in individuals:
+    info = re.split("\n|\s", individual)
+    if len(info) == 8:
+        valid += 1
+    if len(info) == 7 and re.search(r"cid", individual) == None:
+        valid += 1
+
+print(valid)
+
+# Part 2
+
+print("part 2:")
+
+# Check if input in fields is valid, not just number of fields - specifically:
+
+def check_passports(fields):
+    checks = 0
+    for field in fields:
+        fi = field.split(":")
+        if fi[0] == "byr":
+            if int(fi[1]) >= 1920 and int(fi[1]) <= 2002:
+                checks += 1
+        if fi[0] == "iyr":
+            if int(fi[1]) >= 2010 and int(fi[1]) <= 2020:
+                checks += 1
+        if fi[0] == "eyr":
+            if int(fi[1]) >= 2020 and int(fi[1]) <= 2030:
+                checks += 1
+        if fi[0] == "hgt" and fi[1].endswith('cm'):
+            if int(fi[1].strip('cm')) >= 150 and int(fi[1].strip('cm')) <= 193:
+                checks += 1
+        if fi[0] == "hgt" and fi[1].endswith('in'):
+            if int(fi[1].strip('in')) >= 59 and int(fi[1].strip('in')) <= 76:
+                checks += 1
+        if fi[0] == "hcl":
+            if re.match(r"#[a-f0-9]{6}\b", fi[1]):
+                checks += 1
+        if fi[0] == "ecl":
+            if fi[1] in ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]:
+                checks += 1
+        if fi[0] == "pid":
+            if re.match(r"\d{9}\b", fi[1]):
+                checks += 1
+    return checks
+
+f4 = open(os.path.join(path, "day4_input.txt"), "r")
+data = f4.read()
+individuals = re.split("\n\n", data)
+valid = 0
+
+for individual in individuals:
+    info = re.split("\n|\s", individual)
+    if len(info) == 8 and check_passports(info) == 7:
+        valid += 1
+    if len(info) == 7 and re.search(r"cid", individual) == None and check_passports(info) == 7:
+        valid += 1
+
+print(valid)
+
+
 # DAY 3
 
 print("Day 3")
@@ -96,9 +170,6 @@ for slope in slopes:
 print(reduce(lambda x, y: x*y, res_list))
 
 
-quit()
-
-
 # DAY 2
 
 print("Day 2")
@@ -160,11 +231,13 @@ f = open(os.path.join(path, "day1_input.txt"), "r")
 ls_1 = []
 ls_2 = []
 ls_3 = []
+res_ls = []
 
 for line in f:
     ls_1.append(int(line.strip()))
     ls_2.append(int(line.strip()))
     ls_3.append(int(line.strip()))
+    res_ls.append(int(line.strip()))
 
 # part 1
 print("part 1:")
@@ -172,6 +245,7 @@ for x in ls_1:
     for y in ls_2:
         if x + y == 2020:
             print(x * y)
+
 
 # part 2
 print("part 2:")
