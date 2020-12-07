@@ -3,9 +3,54 @@
 import os
 import re
 from functools import reduce
-
+import math
 
 path = "C:\\Users\Lenovo\\Documents\\GitHub\\advent_of_code"
+
+
+# DAY 4
+
+print("Day 5")
+
+# Part 1
+# Binary boarding passes - Find the pass with the highest ID.
+
+print("part 1:")
+
+def BBP(boarding):
+    row = range(0, 128)
+    min_row = 0
+    max_row = 127
+    for letter in boarding[0:7]:
+        if letter == "F":
+            max_row = math.floor(0.5 * (max_row + min_row))
+        elif letter == "B":
+            min_row = math.ceil(0.5 * (max_row + min_row))
+    min_seat = 0
+    max_seat = 7
+    for letter in boarding[7:10]:
+        if letter == "L":
+            max_seat = math.floor(0.5 * (max_seat + min_seat))
+        elif letter == "R":
+            min_seat = math.ceil(0.5 * (max_seat + min_seat))
+    return min_row * 8 + min_seat
+
+f5 = open(os.path.join(path, "day5_input.txt"), "r")
+
+seat_list = []
+
+for line in f5:
+    seat_list.append(BBP(line.strip()))
+
+print(max(seat_list))
+
+
+# Part 2
+# Find your seat!
+
+print("part 2:")
+
+print(sorted(set(range(seat_list[0], seat_list[-1])) - set(seat_list)))
 
 
 # DAY 4
@@ -254,3 +299,4 @@ for x in ls_1:
         for z in ls_3:
             if x + y + z == 2020:
                 print(x * y * z)
+
