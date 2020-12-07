@@ -7,8 +7,62 @@ import math
 
 path = "C:\\Users\Lenovo\\Documents\\GitHub\\advent_of_code"
 
+# DAY 6
 
-# DAY 4
+print("Day 6")
+
+# Part 1
+# Yes-answers per group
+
+print("part 1:")
+
+f6 = open(os.path.join(path, "day6_input.txt"), "r")
+
+def yes(questions):
+    q_list = []
+    for letter in questions:
+        q_list.append(letter)
+    return len(set(q_list))
+
+data = f6.read()
+groups = re.split("\n\n", data)
+yes_sum = 0
+
+for group in groups:
+    yes_sum += yes(re.sub("\n", "", group))
+
+print(yes_sum)
+
+
+# Part 2
+# Questions that everyone in a group answered with "yes".
+
+print("part 2:")
+
+def yes_all(questions, people):
+    count_list = []
+    counter = 0
+    for unique_l in set(questions):
+        count_list.append(questions.count(unique_l))
+    for c in count_list:
+        if c == people:
+            counter += 1
+    return counter
+
+f6 = open(os.path.join(path, "day6_input.txt"), "r")
+data = f6.read()
+groups = re.split("\n\n", data)
+
+answers = 0
+
+for group in groups:
+    individ = re.split("\n", group)
+    answers += yes_all("".join(individ), len(individ))
+
+print(answers)
+
+
+# DAY 5
 
 print("Day 5")
 
