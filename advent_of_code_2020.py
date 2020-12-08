@@ -4,8 +4,63 @@ import os
 import re
 from functools import reduce
 import math
+from collections import defaultdict
 
 path = "C:\\Users\Lenovo\\Documents\\GitHub\\advent_of_code"
+
+
+# DAY 7
+
+print("Day 7")
+
+# Part 1
+# How many bags can fit a shiny gold bag inside them (directly or indirectly)?
+
+print("part 1:")
+
+colours = defaultdict(list)
+
+f7 = open(os.path.join(path, "day7_input.txt"), "r")
+
+for line in f7:
+    line_list = re.split(r" contain |, ", line.strip(".|\n"))
+    if line_list[1] == "no other":
+        colours[line_list[0]].append("None")
+    else:
+        for feature in line_list[1:len(line_list)]:
+            feature_clean = re.sub(r" ?bags? ?|\d ", "", feature)
+            colours[re.sub(r" bags?", "", line_list[0])].append(feature_clean)
+
+lengths = []
+for k, v in colours.items():
+    lengths.append(len(v))
+print(max(lengths))
+
+def bags(colour, bag_dict):
+    results = []
+    for outer_bag, inner_bag in bag_dict.items():
+        if colour in inner_bag:
+            results.append(outer_bag)
+    for outer_bag, inner_bag in bag_dict.items():
+        for b in results:
+            if b in inner_bag:
+                results.append(outer_bag)
+    for outer_bag, inner_bag in bag_dict.items():
+        for b in results:
+            if b in inner_bag:
+                results.append(outer_bag)
+    for outer_bag, inner_bag in bag_dict.items():
+        for b in results:
+            if b in inner_bag:
+                results.append(outer_bag)
+    for outer_bag, inner_bag in bag_dict.items():
+        for b in results:
+            if b in inner_bag:
+                results.append(outer_bag)
+    return len(set(results))
+
+print(bags("shiny gold", colours))
+
 
 # DAY 6
 
