@@ -5,8 +5,90 @@ import re
 from functools import reduce
 import math
 from collections import defaultdict
+import copy
 
 path = "C:\\Users\Lenovo\\Documents\\GitHub\\advent_of_code"
+
+# DAY 8
+
+print("Day 8")
+
+# part 1
+# What's the accelerator value just before the loop repeats for the first time?
+
+print("part 1:")
+
+f8 = open(os.path.join(path, "day8_input.txt"), "r")
+
+f8_dict = defaultdict(list)
+
+line_counter = 1
+for line in f8:
+    f8_dict[line_counter].extend((line.split()[0], line.split()[1]))
+    line_counter += 1
+
+acc = 0
+cur_line = 1
+visited_lines = []
+
+while True:
+    visited_lines.append(cur_line)
+    if len(visited_lines) != len(set(visited_lines)):
+        break
+    cur_inst = f8_dict[cur_line][0]
+    cur_arg = f8_dict[cur_line][1]
+    if cur_inst == "nop":
+        cur_line += 1
+    elif cur_inst == "acc":
+        cur_line += 1
+        acc += int(cur_arg)
+    elif cur_inst == "jmp":
+        cur_line += int(cur_arg)
+
+print(acc)
+
+# Part 2
+# Change one instructon so the program finishes. 
+
+print("Part 2: ")
+
+
+def doesCodeTerminate(code):
+    acc = 0
+    cur_line = 1
+    visited_lines = []
+    end = len(code)
+    while True:
+        visited_lines.append(cur_line)
+        if len(visited_lines) != len(set(visited_lines)):
+            return -False
+        elif cur_line > end:
+            return acc
+        cur_inst = code[cur_line][0]
+        cur_arg = code[cur_line][1]
+        if cur_inst == "nop":
+            cur_line += 1
+        elif cur_inst == "acc":
+            cur_line += 1
+            acc += int(cur_arg)
+        elif cur_inst == "jmp":
+            cur_line += int(cur_arg)
+
+for line_number, inst_arg in f8_dict.items():
+    swapped_code = copy.deepcopy(f8_dict)
+    cur_inst = inst_arg[0]
+    cur_arg = inst_arg[1]
+    if cur_inst == "nop":
+        swapped_code[line_number][0] = "jmp"
+        ret = doesCodeTerminate(swapped_code)
+        if ret != False:
+            print(ret)
+    elif cur_inst == "jmp":
+        swapped_code[line_number][0] = "nop"
+        ret = doesCodeTerminate(swapped_code)
+        if ret != False:
+            print(ret)
+
 
 
 # DAY 7
@@ -60,6 +142,60 @@ def bags(colour, bag_dict):
     return len(set(results))
 
 print(bags("shiny gold", colours))
+
+# Part 2
+# How many bags are in a shiny gold bag?
+
+print("part 2:")
+
+colours = defaultdict(list)
+
+f7 = open(os.path.join(path, "day7_input_short.txt"), "r")
+
+for line in f7:
+    line_list = re.split(r" contain |, ", line.strip(".|\n"))
+    if line_list[1] == "no other":
+        colours[line_list[0]].append("None")
+    else:
+        for feature in line_list[1:len(line_list)]:
+            feature_clean = re.sub(r" ?bags? ?", "", feature)
+            colours[re.sub(r" bags?", "", line_list[0])].append(feature_clean)
+
+#for k, v in colours.items():
+    #print(v)
+#    for vv in v:
+        #print(vv)
+        #vv_ls = vv.split()
+        #print(vv_ls[1:3])
+        #print(vv.split()[-1])
+#        print(" ".join(vv.split()[1:3]))
+    #print(" ".join(v[0].split()[1:2]))
+#    lengths.append(len(v))
+#print(max(lengths))
+
+def bags_number(colour, bag_dict):
+    counter = 0
+    bag_list = []
+    for outer_bag, inner_bag in bag_dict.items():
+        if outer_bag == colour:
+            for bag in inner_bag:
+                if bag.split()[0] != "no":
+                    counter += int(bag.split()[0])
+                    bag_list.append(bag)
+    print(counter, bag_list)
+    for outer_bag, inner_bag in bag_dict.items():
+        for b in bag_list:
+            bag_col = " ".join(b.split()[1:3])
+            bag_num = int(b.split()[0])
+            if outer_bag == bag_col:
+                for bag in inner_bag:
+                    if bag.split()[0] != "no":
+                        bag_list.append(bag)
+                        print(bag_num * int(bag.split()[0]))
+                        counter = counter + bag_num * int(bag.split()[0])
+    return counter, bag_list
+
+print(bags_number("shiny gold", colours))
 
 
 # DAY 6
